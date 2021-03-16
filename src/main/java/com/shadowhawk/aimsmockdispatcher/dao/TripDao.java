@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +34,12 @@ public class TripDao {
     }
 
     public Trip save(Trip trip) throws Exception{
-//        List<Source> sources = trip.getSource();
-//        List<Source> sourcesX = sources.stream().map(source -> {
+//        HashSet<Source> sources = trip.getSource();
+//        HashSet<Source> sourcesX = sources.stream().map(source -> {
 //            Optional<Source> source1 = sourceRepository.findById(source.getSourceID());
 //            if(source1.isPresent()){
-//                log.info(source1.get().toString());
 //                return source1.get();
 //            } else {
-//                log.info(source.toString());
 //                source.setSourceID(0L);
 //                return source;
 //            }
