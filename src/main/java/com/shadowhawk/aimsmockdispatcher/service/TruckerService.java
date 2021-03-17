@@ -17,8 +17,9 @@ public class TruckerService {
     TruckerRepository truckerRepository;
 
 
-    public Trucker save(Trucker trucker) {
-        return truckerRepository.save(trucker);
+    public TruckerInfoResponse save(Trucker trucker) throws Exception{
+        Long truckerId = truckerRepository.save(trucker).getTruckerID();
+        return findTrucker(truckerId);
     }
 
     public TruckerInfoResponse findTrucker(Long truckerID) throws Exception{

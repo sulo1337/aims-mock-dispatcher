@@ -33,7 +33,7 @@ public class TripController {
         }
     }
 
-    @RequestMapping(value = "/api/trip", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/trips", method = RequestMethod.GET)
     public ResponseEntity<?> getAllTrip() {
         try {
             return ResponseEntity.ok(tripService.findAll());
@@ -42,7 +42,7 @@ public class TripController {
         }
     }
 
-    @RequestMapping(value = "/api/trips", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/trip", method = RequestMethod.GET)
     public ResponseEntity<?> getTripsByTruckerId(@RequestParam("truckerID") Long truckerID){
         try{
             return ResponseEntity.ok(truckerService.findTrucker(truckerID));

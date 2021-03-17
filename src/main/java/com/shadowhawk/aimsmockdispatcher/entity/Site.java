@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class Site {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long siteID;
     private String name;
     @OneToOne(cascade = CascadeType.ALL)

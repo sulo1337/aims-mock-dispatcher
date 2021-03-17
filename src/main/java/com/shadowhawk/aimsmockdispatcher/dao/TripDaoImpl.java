@@ -121,6 +121,7 @@ public class TripDaoImpl implements TripDao{
         for(SourceFuelInfoRequest sourceInfo: sources){
             Source thisSource = session.get(Source.class, sourceInfo.getSourceID());
             if(thisSource == null) {
+                session.delete(trip);
                 throw new NotFoundException("Source with id "+sourceInfo.getSourceID()+" not found.");
             }
             String type = sourceInfo.getFuel().getType();
@@ -141,6 +142,7 @@ public class TripDaoImpl implements TripDao{
         for(SiteFuelInfoRequest siteInfo: sites) {
             Site thisSite = session.get(Site.class, siteInfo.getSiteID());
             if(thisSite == null) {
+                session.delete(trip);
                 throw new NotFoundException("Site with id "+siteInfo.getSiteID()+" not found.");
             }
             String type = siteInfo.getFuel().getType();

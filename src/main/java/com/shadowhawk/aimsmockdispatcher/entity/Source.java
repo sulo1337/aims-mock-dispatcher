@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 public class Source {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long sourceID;
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
