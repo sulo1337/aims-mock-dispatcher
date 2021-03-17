@@ -7,18 +7,17 @@ import com.shadowhawk.aimsmockdispatcher.entity.manytomany.TripSite;
 import com.shadowhawk.aimsmockdispatcher.entity.manytomany.TripSource;
 import com.shadowhawk.aimsmockdispatcher.entity.primarykey.TripSitePK;
 import com.shadowhawk.aimsmockdispatcher.entity.primarykey.TripSourcePK;
-import com.shadowhawk.aimsmockdispatcher.vo.InsertTripRequestVO;
-import com.shadowhawk.aimsmockdispatcher.vo.SiteFuelInfo;
-import com.shadowhawk.aimsmockdispatcher.vo.SourceFuelInfo;
+import com.shadowhawk.aimsmockdispatcher.vo.*;
+import javassist.NotFoundException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class TripDaoImpl implements TripDao{
@@ -26,9 +25,79 @@ public class TripDaoImpl implements TripDao{
     @Autowired
     EntityManager entityManager;
 
+    @Autowired
+    TripSourceDao tripSourceDao;
+
+    @Autowired
+    TripSiteDao tripSiteDao;
+
     @Override
-    public List<Trip> findAll() {
-        return null;
+    @Transactional
+    public List<TripResponseVO> findTripById(Long tripID) throws Exception {
+        Session session = entityManager.unwrap(Session.class);
+
+        //create new response template
+        List<TripResponseVO> trips = new ArrayList<>();
+        List<Trip> allTrips;
+
+        if(tripID == 0L) {
+            Query<Trip> query = session.createQuery("from Trip", Trip.class);
+            allTrips = query.getResultList();
+        } else {
+            Query<Trip> query = session.createQuery("from Trip where tripID = :tripID", Trip.class);
+            query.setParameter("tripID", tripID);
+            allTrips = query.getResultList();
+        }
+
+        for(Trip trip: allTrips) {
+            TripResponseVO tripResponseBody = new TripResponseVO(
+                    trip.getTripID(),
+                    trip.getTripLog(),
+                    trip.getTruckID(),
+                    trip.getTruckName(),
+                    trip.getTravelID(),
+                    trip.getTravelType(),
+                    new ArrayList<>(),
+                    new ArrayList<>()
+            );
+
+            List<TripSource> sources = tripSourceDao.findAllByTripId(trip.getTripID());
+            List<TripSite> sites = tripSiteDao.findAllByTripId(trip.getTripID());
+
+            for(TripSource source: sources){
+                SourceFuelInfoResponse sourceFuelInfo = new SourceFuelInfoResponse(
+                        source.getSource().getSourceID(),
+                        source.getSource().getName(),
+                        source.getSource().getLocation(),
+                        new Fuel(
+                                source.getType(),
+                                new Quantity(
+                                        source.getVolume(),
+                                        source.getMeasure()
+                                )
+                        )
+                );
+                tripResponseBody.addSource(sourceFuelInfo);
+            }
+
+            for(TripSite site: sites) {
+                SiteFuelInfoResponse siteFuelInfo = new SiteFuelInfoResponse(
+                        site.getSite().getSiteID(),
+                        site.getSite().getName(),
+                        site.getSite().getLocation(),
+                        new Fuel(
+                                site.getType(),
+                                new Quantity(
+                                        site.getVolume(),
+                                        site.getMeasure()
+                                )
+                        )
+                );
+                tripResponseBody.addSite(siteFuelInfo);
+            }
+            trips.add(tripResponseBody);
+        }
+        return trips;
     }
 
     @Override
@@ -37,8 +106,8 @@ public class TripDaoImpl implements TripDao{
         Session session = entityManager.unwrap(Session.class);
 
         try {
-            List<SourceFuelInfo> sources = tripRequestBody.getSource();
-            List<SiteFuelInfo> sites = tripRequestBody.getSite();
+            List<SourceFuelInfoRequest> sources = tripRequestBody.getSource();
+            List<SiteFuelInfoRequest> sites = tripRequestBody.getSite();
 
             Trip trip = new Trip(
                     tripRequestBody.getTripID(),
@@ -50,8 +119,11 @@ public class TripDaoImpl implements TripDao{
             );
             session.saveOrUpdate(trip);
 
-            for(SourceFuelInfo sourceInfo: sources){
+            for(SourceFuelInfoRequest sourceInfo: sources){
                 Source thisSource = session.get(Source.class, sourceInfo.getSourceID());
+                if(thisSource == null) {
+                    throw new NotFoundException("Source with id "+sourceInfo.getSourceID()+" not found.");
+                }
                 String type = sourceInfo.getFuel().getType();
                 Double volume = sourceInfo.getFuel().getQuantity().getVolume();
                 String measure = sourceInfo.getFuel().getQuantity().getMeasure();
@@ -67,8 +139,11 @@ public class TripDaoImpl implements TripDao{
                 session.save(tripSource);
             }
 
-            for(SiteFuelInfo siteInfo: sites) {
+            for(SiteFuelInfoRequest siteInfo: sites) {
                 Site thisSite = session.get(Site.class, siteInfo.getSiteID());
+                if(thisSite == null) {
+                    throw new NotFoundException("Site with id "+siteInfo.getSiteID()+" not found.");
+                }
                 String type = siteInfo.getFuel().getType();
                 Double volume = siteInfo.getFuel().getQuantity().getVolume();
                 String measure = siteInfo.getFuel().getQuantity().getMeasure();
@@ -85,7 +160,7 @@ public class TripDaoImpl implements TripDao{
             }
             return trip;
         } catch (Exception e) {
-            throw new Exception("source or site not found" + e.getMessage());
+            throw new Exception(e.getMessage());
         }
     }
 }

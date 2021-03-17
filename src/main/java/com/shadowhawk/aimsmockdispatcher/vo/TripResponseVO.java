@@ -9,13 +9,21 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InsertTripRequestVO {
+public class TripResponseVO {
     private Long tripID;
     private Long tripLog;
     private String truckID;
     private String truckName;
     private String travelID;
     private String travelType;
-    private List<SourceFuelInfoRequest> source;
-    private List<SiteFuelInfoRequest> site;
+    private List<SourceFuelInfoResponse> source;
+    private List<SiteFuelInfoResponse> site;
+
+    public void addSource(SourceFuelInfoResponse sourceFuelInfoResponse){
+        this.source.add(sourceFuelInfoResponse);
+    }
+
+    public void addSite(SiteFuelInfoResponse siteFuelInfoResponse){
+        this.site.add(siteFuelInfoResponse);
+    }
 }

@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SourceFuelInfo {
-    private Long sourceID;
-    private Fuel fuel;
+public class TripsListResponse {
+    private List<TripResponseVO> tripList;
 }
