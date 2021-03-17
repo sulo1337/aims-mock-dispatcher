@@ -136,7 +136,7 @@ public class TripDaoImpl implements TripDao{
                     volume,
                     measure
             );
-            session.save(tripSource);
+            session.saveOrUpdate(tripSource);
         }
 
         for(SiteFuelInfoRequest siteInfo: sites) {
@@ -157,7 +157,7 @@ public class TripDaoImpl implements TripDao{
                     volume,
                     measure
             );
-            session.save(tripSite);
+            session.saveOrUpdate(tripSite);
         }
         return findTripById(trip.getTripID()).get(0);
     }
