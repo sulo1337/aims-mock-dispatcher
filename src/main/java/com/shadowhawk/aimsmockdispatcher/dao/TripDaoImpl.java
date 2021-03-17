@@ -118,6 +118,18 @@ public class TripDaoImpl implements TripDao{
         );
         session.saveOrUpdate(trip);
 
+        //remove all source and site information
+        String hql1 = "delete from TripSite T where T.id.tripID = :tripID";
+        String hql2 = "delete from TripSource T where T.id.tripID = :tripID";
+        Query query1 = session.createQuery(hql1);
+        Query query2 = session.createQuery(hql2);
+        query1.setParameter("tripID", tripRequestBody.getTripID());
+        query2.setParameter("tripID", tripRequestBody.getTripID());
+
+        query1.executeUpdate();
+        query2.executeUpdate();
+
+        //add or update new source and site information
         for(SourceFuelInfoRequest sourceInfo: sources){
             Source thisSource = session.get(Source.class, sourceInfo.getSourceID());
             if(thisSource == null) {
