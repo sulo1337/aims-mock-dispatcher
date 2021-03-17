@@ -1,7 +1,7 @@
 package com.shadowhawk.aimsmockdispatcher.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.shadowhawk.aimsmockdispatcher.vo.Gps;
+import com.shadowhawk.aimsmockdispatcher.vo.misc.Gps;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

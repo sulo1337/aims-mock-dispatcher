@@ -1,7 +1,8 @@
-package com.shadowhawk.aimsmockdispatcher.vo;
+package com.shadowhawk.aimsmockdispatcher.vo.misc;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shadowhawk.aimsmockdispatcher.vo.misc.Gps;
 import lombok.Data;
 
 import java.util.Date;

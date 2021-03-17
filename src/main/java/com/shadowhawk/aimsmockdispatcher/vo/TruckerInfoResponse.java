@@ -9,6 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TripsListResponse {
-    private List<TripResponseVO> tripList;
+public class TruckerInfoResponse {
+    private Long truckerID;
+    private String truckerName;
+    private List<TripResponseVO> trip;
 }

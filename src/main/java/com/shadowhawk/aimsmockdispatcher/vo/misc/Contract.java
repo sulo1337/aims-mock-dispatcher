@@ -1,4 +1,4 @@
-package com.shadowhawk.aimsmockdispatcher.vo;
+package com.shadowhawk.aimsmockdispatcher.vo.misc;
 
 import lombok.Data;
 

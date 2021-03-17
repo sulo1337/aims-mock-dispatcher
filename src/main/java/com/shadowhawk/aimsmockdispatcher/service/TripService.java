@@ -30,4 +30,13 @@ public class TripService {
     public List<TripResponseVO> findAll() throws Exception{
         return tripDao.findTripById(0L);
     }
+
+    public TripResponseVO findTripById(Long tripID) throws Exception{
+        TripResponseVO trip = tripDao.findTripById(tripID).get(0);
+        if(trip == null) {
+            throw new Exception("Trip with given id "+tripID+" not found.");
+        } else{
+            return trip;
+        }
+    }
 }

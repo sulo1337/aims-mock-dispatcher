@@ -1,7 +1,7 @@
 package com.shadowhawk.aimsmockdispatcher.controller;
 
-import com.shadowhawk.aimsmockdispatcher.vo.Contract;
-import com.shadowhawk.aimsmockdispatcher.vo.TruckNav;
+import com.shadowhawk.aimsmockdispatcher.vo.misc.Contract;
+import com.shadowhawk.aimsmockdispatcher.vo.misc.TruckNav;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
