@@ -1,5 +1,6 @@
 package com.shadowhawk.aimsmockdispatcher.entity;
 
+import com.shadowhawk.aimsmockdispatcher.entity.manytomany.TripSource;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,9 +15,6 @@ public class Source {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location")
     private Location location;
-    @JoinColumn(name="fuel")
-    @OneToOne(cascade = CascadeType.ALL)
-    private Fuel fuel;
 
     @Override
     public int hashCode() {

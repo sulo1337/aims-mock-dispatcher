@@ -14,9 +14,6 @@ public class Site {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location")
     private Location location;
-    @JoinColumn(name="fuel")
-    @OneToOne(cascade = CascadeType.ALL)
-    private Fuel fuel;
 
     @Override
     public int hashCode() {
