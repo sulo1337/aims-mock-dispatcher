@@ -23,7 +23,7 @@ public class TripService {
     @Autowired
     SiteRepository siteRepository;
 
-    public Trip save(InsertTripRequestVO tripRequestBody) throws Exception {
+    public TripResponseVO save(InsertTripRequestVO tripRequestBody) throws Exception {
         return tripDao.saveOrUpdate(tripRequestBody);
     }
 

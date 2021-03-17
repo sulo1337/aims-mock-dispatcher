@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 public class Trucker {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long truckerID;
     private String truckerName;
     @OneToMany(cascade = CascadeType.REFRESH)

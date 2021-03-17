@@ -102,65 +102,61 @@ public class TripDaoImpl implements TripDao{
 
     @Override
     @Transactional
-    public Trip saveOrUpdate(InsertTripRequestVO tripRequestBody) throws Exception{
+    public TripResponseVO saveOrUpdate(InsertTripRequestVO tripRequestBody) throws Exception{
         Session session = entityManager.unwrap(Session.class);
 
-        try {
-            List<SourceFuelInfoRequest> sources = tripRequestBody.getSource();
-            List<SiteFuelInfoRequest> sites = tripRequestBody.getSite();
+        List<SourceFuelInfoRequest> sources = tripRequestBody.getSource();
+        List<SiteFuelInfoRequest> sites = tripRequestBody.getSite();
 
-            Trip trip = new Trip(
-                    tripRequestBody.getTripID(),
-                    tripRequestBody.getTripLog(),
-                    tripRequestBody.getTruckID(),
-                    tripRequestBody.getTruckName(),
-                    tripRequestBody.getTravelID(),
-                    tripRequestBody.getTravelType()
+        Trip trip = new Trip(
+                tripRequestBody.getTripID(),
+                tripRequestBody.getTripLog(),
+                tripRequestBody.getTruckID(),
+                tripRequestBody.getTruckName(),
+                tripRequestBody.getTravelID(),
+                tripRequestBody.getTravelType()
+        );
+        session.saveOrUpdate(trip);
+
+        for(SourceFuelInfoRequest sourceInfo: sources){
+            Source thisSource = session.get(Source.class, sourceInfo.getSourceID());
+            if(thisSource == null) {
+                throw new NotFoundException("Source with id "+sourceInfo.getSourceID()+" not found.");
+            }
+            String type = sourceInfo.getFuel().getType();
+            Double volume = sourceInfo.getFuel().getQuantity().getVolume();
+            String measure = sourceInfo.getFuel().getQuantity().getMeasure();
+            TripSourcePK tripSourcePK = new TripSourcePK(trip.getTripID(), thisSource.getSourceID());
+            TripSource tripSource = new TripSource(
+                    tripSourcePK,
+                    trip,
+                    thisSource,
+                    type,
+                    volume,
+                    measure
             );
-            session.saveOrUpdate(trip);
-
-            for(SourceFuelInfoRequest sourceInfo: sources){
-                Source thisSource = session.get(Source.class, sourceInfo.getSourceID());
-                if(thisSource == null) {
-                    throw new NotFoundException("Source with id "+sourceInfo.getSourceID()+" not found.");
-                }
-                String type = sourceInfo.getFuel().getType();
-                Double volume = sourceInfo.getFuel().getQuantity().getVolume();
-                String measure = sourceInfo.getFuel().getQuantity().getMeasure();
-                TripSourcePK tripSourcePK = new TripSourcePK(trip.getTripID(), thisSource.getSourceID());
-                TripSource tripSource = new TripSource(
-                        tripSourcePK,
-                        trip,
-                        thisSource,
-                        type,
-                        volume,
-                        measure
-                );
-                session.save(tripSource);
-            }
-
-            for(SiteFuelInfoRequest siteInfo: sites) {
-                Site thisSite = session.get(Site.class, siteInfo.getSiteID());
-                if(thisSite == null) {
-                    throw new NotFoundException("Site with id "+siteInfo.getSiteID()+" not found.");
-                }
-                String type = siteInfo.getFuel().getType();
-                Double volume = siteInfo.getFuel().getQuantity().getVolume();
-                String measure = siteInfo.getFuel().getQuantity().getMeasure();
-                TripSitePK tripSitePK = new TripSitePK(trip.getTripID(), thisSite.getSiteID());
-                TripSite tripSite = new TripSite(
-                        tripSitePK,
-                        trip,
-                        thisSite,
-                        type,
-                        volume,
-                        measure
-                );
-                session.save(tripSite);
-            }
-            return trip;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            session.save(tripSource);
         }
+
+        for(SiteFuelInfoRequest siteInfo: sites) {
+            Site thisSite = session.get(Site.class, siteInfo.getSiteID());
+            if(thisSite == null) {
+                throw new NotFoundException("Site with id "+siteInfo.getSiteID()+" not found.");
+            }
+            String type = siteInfo.getFuel().getType();
+            Double volume = siteInfo.getFuel().getQuantity().getVolume();
+            String measure = siteInfo.getFuel().getQuantity().getMeasure();
+            TripSitePK tripSitePK = new TripSitePK(trip.getTripID(), thisSite.getSiteID());
+            TripSite tripSite = new TripSite(
+                    tripSitePK,
+                    trip,
+                    thisSite,
+                    type,
+                    volume,
+                    measure
+            );
+            session.save(tripSite);
+        }
+        return findTripById(trip.getTripID()).get(0);
     }
 }
